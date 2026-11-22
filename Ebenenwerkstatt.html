@@ -1,0 +1,692 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ebenenwerkstatt | Mathewerkstatt</title><style>
+:root{--ink:#282137;--accent:#bd246f;--accent-dark:#971852;--canvas:#f4f4f0;--tint:#ffedf6;--line:#e8deea}*{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font-family:system-ui,sans-serif}header{padding:23px 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:15px}header>span,.eyebrow{font-size:11px;letter-spacing:2px;font-weight:700}.brand{display:inline-flex;align-items:center;gap:11px;color:var(--ink);font-weight:800}.brand span{font-size:20px}.brand .brand-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;font-size:25px;line-height:1}main{max-width:1240px;margin:auto;padding:0 35px}.intro{padding:48px 0 35px;position:relative}.eyebrow{color:var(--accent)}h1{font-size:clamp(35px,5vw,60px);letter-spacing:-2.5px;line-height:1.07;margin:16px 0}p{line-height:1.65;color:#5e5268}.formula{position:absolute;right:2%;top:90px;background:var(--tint);transform:rotate(-4deg);padding:28px;border-radius:22px;font-size:27px;font-family:Georgia,serif}.layout{display:grid;grid-template-columns:260px 1fr;gap:26px}aside{padding:20px 0}aside h2{font-size:14px;margin:0 0 18px}nav{display:grid;gap:8px}button{font:inherit;cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:12px 17px;background:white;color:var(--ink)}button:hover{background:var(--tint)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--accent-dark);outline-offset:3px}nav button{text-align:left;background:transparent;border-color:transparent}nav button.active{background:var(--accent);color:white}.workspace{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;min-height:485px;box-shadow:0 10px 32px #3d16450a}.topline{display:flex;justify-content:space-between;font-size:11px;letter-spacing:1.3px;color:#6a4b64}.workspace h2{font-size:27px;letter-spacing:-.7px;margin-bottom:4px}.progress{margin:25px 12px;font-size:14px}.progress small{display:block;font-size:11px;line-height:1.5}progress{width:100%;accent-color:var(--accent);height:7px;margin:12px 0}.text{border:0;background:transparent;padding:15px 0;font-size:12px;text-decoration:underline}.question{font-size:21px;margin:20px 0}.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choices button{text-align:left}.fields{display:flex;gap:14px;flex-wrap:wrap}label{display:grid;gap:7px;font-size:14px}input[type=text]{width:100px;padding:12px;border:1px solid #9c8ba4;border-radius:8px;font:inherit}input[type=range]{width:100%;accent-color:var(--accent)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.primary{background:var(--accent);color:white}.primary:hover,nav button.active:hover{background:var(--accent-dark)}.feedback{padding:14px;border-radius:10px;background:#edf2e8;margin-top:15px;line-height:1.6}.feedback.bad{background:#fff0e4}.graph{width:100%;max-height:340px;display:block;background:#fdfbfe;border:1px solid var(--line);border-radius:12px;margin:15px 0}.lab{display:grid;grid-template-columns:1fr 180px;gap:22px}.lab label{margin:13px 0}.equation{font-family:Georgia,serif;font-size:26px;margin:20px 0}.note{font-size:13px}footer{padding:30px 0;font-size:11px;color:#65576d} @media(max-width:760px){main{padding:0 18px}header>span,.formula{display:none}.intro{padding-top:30px}.layout{grid-template-columns:1fr;gap:10px}aside{padding:0}nav{display:flex;overflow-x:auto}nav button{white-space:nowrap}.progress{margin:12px}.progress small,.progress .text,aside h2{display:none}.workspace{padding:20px}.lab{grid-template-columns:1fr}.choices{grid-template-columns:1fr}h1{letter-spacing:-1.5px}}
+
+.blanks{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:20px 15px;background:#f8f5fa;border-radius:12px}.blanks input[type=text]{width:70px;font-family:system-ui,sans-serif;font-size:20px;text-align:center}.blanks select{font:inherit;font-size:22px;border:1px solid #9c8ba4;border-radius:8px;padding:9px;background:white;color:var(--ink)}select:focus-visible{outline:3px solid var(--accent-dark);outline-offset:3px}.mission{padding:18px;background:var(--tint);border-left:4px solid var(--accent);border-radius:10px;margin-top:20px}.mission p{margin-bottom:0;color:var(--ink)}
+
+.value-table{border-collapse:collapse;width:100%;margin:20px 0}.value-table th,.value-table td{padding:14px;text-align:center;border:1px solid #a9b9aa}.value-table th{background:#f8f5fa}.value-table input[type=text]{width:80px;text-align:center}.vertex{width:max-content;max-width:100%;gap:12px}.lab .graph{max-height:none;width:100%;aspect-ratio:4/3}.lab{grid-template-columns:minmax(0,1fr) 180px}@media(max-width:760px){.lab{grid-template-columns:1fr}.value-table th,.value-table td{padding:8px}.value-table input[type=text]{width:60px}}
+
+/* Responsive layout and touch controls. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.layout{grid-template-columns:260px minmax(0,1fr)}
+.layout>*,.workspace,#content,.lab>*,aside,nav{min-width:0}
+.mobile-station{display:none}
+.equation-product,.equation-bracket,.equation-tail{display:inline-flex;align-items:center;gap:10px;flex:none}
+button,input,select{touch-action:manipulation}
+.slider-controls{display:flex;align-items:center;gap:10px;min-width:0}
+.slider-controls button{flex:0 0 44px;min-height:44px;padding:4px;font-size:23px}
+.slider-controls input{min-width:0;flex:1;height:44px;margin:0}
+.graph{height:auto}
+select,input[type=text]{font-size:16px}
+@media(max-width:1000px){
+ .layout{grid-template-columns:minmax(0,1fr)}
+ aside{padding:0}.mobile-station{display:block}
+ nav{display:none}.progress{margin:12px 0}.progress small,.progress .text,aside h2{display:none}
+ .progress progress{margin:6px 0}.formula{display:none}.intro{padding:24px 0 18px}
+ h1{font-size:40px;letter-spacing:-1.5px;margin:12px 0}.intro p{margin:10px 0}
+ .workspace{min-height:0}
+}
+@media(max-width:600px){
+ header{padding:14px 16px}header>span{display:none}main{padding:0 12px}
+ .brand span{font-size:18px}.intro .eyebrow{font-size:10px;letter-spacing:1px}
+ h1{font-size:32px;letter-spacing:-1px}.intro p{font-size:14px;line-height:1.5}
+ .layout{gap:8px}.workspace{padding:16px 12px;border-radius:16px}
+ .workspace h2{font-size:24px;line-height:1.2}.topline{font-size:10px;letter-spacing:.5px;gap:8px;flex-wrap:wrap}
+ .workspace p{font-size:15px;line-height:1.55}.question{font-size:18px;line-height:1.55;margin:16px 0}
+ .choices{grid-template-columns:minmax(0,1fr)}button{min-height:46px}
+ .choices button{white-space:normal;overflow-wrap:anywhere}
+ .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .actions button{font-size:14px;padding:10px 8px;white-space:normal}
+ .blanks{padding:12px 8px;gap:9px;font-size:22px;line-height:1.5}
+ .blanks .equation-name{flex-basis:100%}
+ .equation-product,.equation-bracket,.equation-tail{gap:5px}
+ .blanks input[type=text]{width:50px;min-width:0;min-height:46px;padding:7px 3px;font-size:18px}
+ .blanks select{width:46px;min-width:0;min-height:46px;padding:5px 1px;font-size:19px}
+ .vertex{gap:8px}.vertex input[type=text]{width:64px}
+ .value-table{table-layout:fixed;font-size:16px}.value-table th,.value-table td{padding:6px 3px}
+ .value-table input[type=text]{width:100%;min-width:0;min-height:46px;padding:7px 2px;font-size:17px}
+ .lab{grid-template-columns:minmax(0,1fr);gap:4px}.lab .equation{font-size:23px;margin:16px 0 8px}
+ .lab .graph{width:100%;max-height:none;aspect-ratio:4/3;margin:8px 0}
+ .graph text{font-size:20px}.graph text:last-child,.graph text:nth-last-child(2){font-size:22px}
+ .lab label{margin:8px 0;font-size:15px}.slider-controls{gap:12px}
+ .mission{padding:12px;margin-top:16px}.mission .eyebrow{font-size:10px;letter-spacing:.8px}
+ .feedback{font-size:15px;padding:12px;overflow-wrap:anywhere}
+ footer{padding:22px 0;font-size:11px;line-height:1.6}
+}
+
+
+:root{--marker-x:#ffe666;--marker-y:#a8ed9c;--marker-factor:#ffadd6}
+mark[data-coordinate]{color:inherit;padding:0 .16em;border-radius:.16em}
+[data-coordinate="x"]{--coordinate-color:var(--marker-x)}
+[data-coordinate="y"]{--coordinate-color:var(--marker-y)}
+[data-coordinate="factor"]{--coordinate-color:var(--marker-factor)}
+mark[data-coordinate], #content input[data-coordinate]{background:linear-gradient(transparent 24%,var(--coordinate-color) 24% 93%,transparent 93%)}
+#content input[data-coordinate]{background-color:#fff}
+
+.station-check{color:#20864a;margin-inline-start:.35em;font-size:1.22em;line-height:1;font-weight:800}
+nav button.active .station-check{color:#cbffd7}
+.station-hint:has(#station-hint:not(:empty)){margin-top:14px;padding:12px 14px;border-radius:10px;background:#eef7ef;color:#185c33}
+
+nav button[data-mode]{font-size:1.0625rem}
+#next-station{margin-top:10px;text-align:left}
+@media(max-width:1000px){
+ .mobile-station-label{display:block;margin-bottom:7px;font-size:.875rem;font-weight:650}
+ .mobile-station summary{position:relative;display:block;list-style:none;cursor:pointer;min-height:48px;padding:12px;padding-inline-end:38px;border:1px solid var(--line);border-radius:10px;background:white;font-size:1.0625rem}
+ .mobile-station summary::-webkit-details-marker{display:none}
+ .mobile-station summary::after{content:"";position:absolute;inset-inline-end:15px;top:50%;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+ #mobile-current{display:inline;font-weight:700}
+ #mobile-nav{display:grid;gap:4px;padding:6px 0}
+ #mobile-nav button{white-space:normal}
+}
+
+.formula{top:54px}
+.feedback:empty{display:none}
+.graph text{font:14px system-ui,sans-serif;fill:var(--ink)}
+.plot-hit{cursor:pointer}
+.plot-hit:focus{outline:none;stroke:var(--accent-dark);stroke-width:3}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.9rem}
+.legend span{border-bottom:3px solid var(--curve)}
+.choices button[aria-pressed=true]{border-color:var(--accent);background:var(--tint)}
+.progress .text{display:block}
+@media(max-width:1000px){.progress .text{padding:5px 0;min-height:0}}
+.fraction{display:inline-flex;vertical-align:middle;flex-direction:column;align-items:stretch;text-align:center;line-height:1.05;margin:.1em .08em;white-space:nowrap}
+.fraction>span{padding:.07em .18em}
+.fraction>span:first-child{border-bottom:1px solid currentColor}
+.excluded{display:inline-block;vertical-align:-.15em;white-space:nowrap}
+.asym-y{color:#984708}.asym-x{color:#ad195f}
+.choices button{text-align:left}
+.graph .curve-label{font-weight:750;font-size:17px;paint-order:stroke;stroke:#fdfbfe;stroke-width:4px;stroke-linejoin:round}
+
+[hidden]{display:none!important}
+summary:focus-visible{outline:3px solid var(--accent-dark);outline-offset:3px}
+.choices button[aria-pressed=true]{box-shadow:inset 0 0 0 1px var(--accent)}
+.station-check{color:#48a963;text-shadow:0 0 .4px currentColor}
+#next-station{background:var(--accent);color:white}
+#next-station:hover{background:var(--accent-dark)}
+.math{font-family:Georgia,"Times New Roman",serif;font-size:1.12em}
+.math-line{display:block;margin:.35em 0}
+.vec{display:inline-grid;vertical-align:middle;text-align:center;line-height:1.08;padding:.1em .44em;margin:.04em .13em;border-inline:1.25px solid;border-radius:.42em / 50%}
+.sym{position:relative;display:inline-block;padding-top:.22em}
+.sym::before{content:"→";position:absolute;left:0;right:0;text-align:center;top:-.46em;font-size:.8em}
+.feedback p{color:inherit;margin:.55em 0}
+.options-wide{grid-template-columns:minmax(0,1fr)}
+#content input{color:var(--ink);background:white;min-height:46px}
+.graph{max-width:550px;max-height:none}
+.graph text{font-size:16px;paint-order:stroke;stroke:#fdfbfe;stroke-width:3px;stroke-linejoin:round}
+.graph .axis-name{font-size:20px;font-weight:700}
+.graph .point-name{fill:#971852;font-weight:700}
+@media(max-width:600px){.fields{gap:9px}.fields label{min-width:0}.fields input[type=text]{width:76px;padding:8px}.question{overflow-wrap:anywhere}}
+
+.point-yes{color:#21743f;font-weight:700}
+.point-no{color:#a52538;font-weight:700}
+.contradiction{font-size:1.25em;margin-inline-start:.3em}
+.vector-entry,.point-entry{display:flex;align-items:center;gap:.25em}
+.vector-entry .vec{gap:5px}
+.point-entries{display:grid;gap:10px;justify-items:start}
+#content .vector-entry input,#content .point-entry input{width:clamp(42px,12vw,68px);text-align:center;padding:7px 3px}
+.relation-sketches,.relation-legend{--direction:#ae4a08;--normal:#ac1e35}
+.relation-sketches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.relation-sketches figure{margin:0;border:1px solid var(--line);border-radius:12px;background:#fdfbfe;overflow:hidden}
+.relation-sketches figcaption{padding:10px 12px 0;font-weight:700}
+.relation-graph{display:block;width:100%;height:auto}
+.relation-graph text{font:italic 700 17px Georgia,serif;fill:var(--ink)}
+.relation-graph .direction{fill:var(--direction)}
+.relation-graph .normal{fill:var(--normal)}
+.relation-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem}
+.relation-legend .direction{color:var(--direction)}
+.relation-legend .normal{color:var(--normal)}
+@media(max-width:560px){.relation-sketches{grid-template-columns:1fr}}
+</style><body><header><div class="brand"><span class="brand-icon" aria-hidden="true">π</span><span>Mathewerkstatt</span></div><span>LERNAPPS FÜR MATHEMATIK</span></header><main><section class="intro"><div class="eyebrow">KOORDINATENFORM EINER EBENE</div><h1>Ebenenwerkstatt</h1><p>Rechne mit Ebenen in Koordinatenform und stelle sie im Raum dar.</p><div class="formula">n₁x₁ + n₂x₂ + n₃x₃ = d</div></section><div class="layout"><aside><h2>Deine Werkstatt</h2><div class="mobile-station"><span class="mobile-station-label" id="mobile-station-label">Übungsbereich auswählen</span><details id="mobile-station"><summary aria-labelledby="mobile-station-label mobile-current"><span id="mobile-current"></span><span class="station-check" id="mobile-current-check" aria-hidden="true" hidden>✓</span></summary><nav id="mobile-nav" aria-label="Übungsbereiche"></nav></details></div><nav id="nav" aria-label="Übungsbereiche"></nav><div class="progress"><span id="score"></span><progress id="bar" max="1" aria-label="Fortschritt über alle Übungsstationen" value="0"></progress><small>Richtig gelöste Aufgaben · auf diesem Gerät</small><button class="text" id="reset">Fortschritt zurücksetzen</button></div></aside><section class="workspace"><div class="topline"><span id="tag"></span><span id="count"></span></div><h2 id="title" tabindex="-1"></h2><p id="desc"></p><div id="content"></div><div class="station-hint"><div id="station-hint" role="status"></div><button id="next-station" type="button" hidden></button></div></section></div><footer>Passend zum Arbeitsblatt „Koordinatenform einer Ebene“ · Dein Fortschritt wird im Browser gespeichert.</footer></main><script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const subs = ["₁", "₂", "₃"];
+const x = i => "x" + subs[i];
+const names = [
+  "Punktprobe", "Kreuzprodukt", "Koordinatenform aufstellen",
+  "Spurpunkte berechnen", "Ebene im Koordinatensystem",
+  "Von Spurpunkten zur Gleichung", "Besondere Ebenen",
+  "Zur Parameterform wechseln", "Gerade und Ebene"
+];
+// Hier lässt sich die Anzahl pro Station einstellen.
+const required = names.map((_, i) => i === 6 ? 4 : 2);
+const descriptions = [
+  "Setze die Koordinaten eines Punkts in die Ebenengleichung ein.",
+  "Berechne einen Vektor, der zu beiden gegebenen Vektoren orthogonal ist.",
+  "Bestimme zuerst einen Normalenvektor und setze dann einen Ebenenpunkt ein.",
+  "Berechne die Schnittpunkte der Ebene mit den Koordinatenachsen.",
+  "Setze die Spurpunkte auf die Achsen und zeichne damit einen Ebenenausschnitt.",
+  "Stelle aus drei Spurpunkten eine Ebenengleichung in Koordinatenform auf.",
+  "Erkenne an fehlenden Variablen, wie die Ebene zu den Koordinatenachsen liegt.",
+  "Finde einen Stützpunkt und zwei linear unabhängige Spannvektoren.",
+  "Untersuche die Lage einer Geraden mithilfe des Normalenvektors der Ebene."
+];
+const storageKey = "mathewerkstatt.koordinatenform.v1";
+let counts = names.map(() => 0);
+try {
+  const saved = JSON.parse(localStorage.getItem(storageKey));
+  if (Array.isArray(saved)) counts = counts.map((_, i) =>
+    Number.isSafeInteger(saved[i]) && saved[i] >= 0 ? saved[i] : 0);
+} catch {}
+const drafts = names.map(() => null);
+const last = names.map(() => "");
+let mode = 0;
+
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = values => values[rand(0, values.length - 1)];
+const nonzero = () => pick([-3, -2, -1, 1, 2, 3]);
+const triple = () => Array.from({length: 3}, () => rand(-3, 3));
+const dot = (a, b) => a.reduce((sum, v, i) => sum + v * b[i], 0);
+const cross = (a, b) => a.map((_, i) => {
+  const j = (i + 1) % 3, k = (i + 2) % 3;
+  return a[j] * b[k] - a[k] * b[j];
+});
+const fmt = v => String(v).replace(/^-/, "−");
+const factor = v => v < 0 ? "(" + fmt(v) + ")" : fmt(v);
+const mat = value => '<span class="math">' + value + '</span>';
+const line = value => '<span class="math math-line">' + value + '</span>';
+const sym = letter => '<span class="sym">' + letter + '</span>';
+const vec = values => '<span class="vec">' +
+  values.map(v => "<span>" + fmt(v) + "</span>").join("") + "</span>";
+const pt = (name, values) => name + "(" + values.map(fmt).join("|") + ")";
+const frac = (a, b) => '<span class="fraction"><span>' + fmt(a) + '</span><span>' + fmt(b) + '</span></span>';
+const lhs = n => n.reduce((result, v, i) => {
+  if (!v) return result;
+  const sign = v < 0 ? (result ? " − " : "−") : (result ? " + " : "");
+  return result + sign + (Math.abs(v) === 1 ? "" : Math.abs(v)) + x(i);
+}, "") || "0";
+const equation = (n, d) => lhs(n) + " = " + fmt(d);
+const coord = (n, d) => "E: " + equation(n, d);
+const param = (p, u, v) => "E: " + sym("x") + " = " + vec(p) + " + r · " + vec(u) + " + s · " + vec(v);
+const dotCalc = (a, b) => a.map((v, i) => {
+  const coefficient = i === 0 ? fmt(v) : (v < 0 ? " − " : " + ") + Math.abs(v);
+  return coefficient + " · " + factor(b[i]);
+}).join("");
+const crossCalc = (a, b) => a.map((_, i) => {
+  const j = (i + 1) % 3, k = (i + 2) % 3;
+  return fmt(a[j]) + " · " + factor(b[k]) + " − " + factor(a[k]) + " · " + factor(b[j]);
+});
+const axisPoint = (i, value) => subs.map((_, j) => i === j ? value : 0);
+const spurCoordinates = values => values.flatMap((value, i) => axisPoint(i, value));
+const spurLabels = subs.flatMap(s => subs.map(t => "S"+s+", Koordinate x"+t));
+const options = (question, hint, solution, correct, ...wrong) => {
+  const choices = [correct, ...new Set(wrong.filter(value => value !== correct))];
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = rand(0, i);
+    [choices[i], choices[j]] = [choices[j], choices[i]];
+  }
+  return {question, hint, solution, choices, answer: choices.indexOf(correct)};
+};
+const fields = (question, hint, solution, labels, answer, extra = {}) =>
+  ({question, hint, solution, labels, answer, ...extra});
+const spanData = () => {
+  const m = nonzero(), k = nonzero();
+  return {u:[1,0,m], v:[0,1,k], n:[-m,-k,1]};
+};
+
+function pointTask() {
+  const {n} = spanData(), p = triple();
+  const value = dot(n, p), d = value + pick([0, 0, -2, -1, 1, 2]);
+  const yes = value === d;
+  const inPlane = '<span class="point-yes">P liegt in E.</span>';
+  const outsidePlane = '<span class="point-no">P liegt nicht in E.</span>';
+  const comparison = fmt(value) + " = " + fmt(d) +
+    (yes ? "" : ' <span class="point-no contradiction" role="img" aria-label="Widerspruch">↯</span>');
+  return {...options("Liegt " + mat(pt("P", p)) + " in der Ebene?" + line(coord(n, d)),
+    "Setze x₁, x₂ und x₃ aus P ein. Vergleiche den Wert der linken Seite mit " + fmt(d) + ".",
+    line(dotCalc(n, p) + " = " + fmt(d)) + line(comparison) +
+    (yes ? "Punktprobe erfüllt. " + inPlane : "Punktprobe nicht erfüllt. " + outsidePlane),
+    yes ? inPlane : outsidePlane, yes ? outsidePlane : inPlane), showOnWrong: true};
+}
+
+function crossTask() {
+  let a, b, n;
+  do {
+    a = triple(); b = triple(); n = cross(a, b);
+  } while (!n.some(Boolean));
+  return fields("Berechne " + mat(sym("n") + " = " + sym("a") + " × " + sym("b")) +
+    " in genau dieser Reihenfolge." + line(sym("a") + " = " + vec(a) + ", &nbsp; " + sym("b") + " = " + vec(b)),
+    "Beginne mit a₂ · b₃ − a₃ · b₂. Verwende danach die Indexpaare 3 und 1 sowie 1 und 2.",
+    line(sym("a") + " × " + sym("b") + " = " + vec(crossCalc(a,b)) + " = " + vec(n)) +
+    "Beide Skalarprodukte sind null." +
+    line(vec(n) + " · " + vec(a) + " = " + dotCalc(n,a) + " = 0") +
+    line(vec(n) + " · " + vec(b) + " = " + dotCalc(n,b) + " = 0"),
+    ["n₁", "n₂", "n₃"], n, {notation: "vector"});
+}
+
+function constructTask() {
+  const variant = rand(0, 2), p = triple();
+  const {u,v,n} = spanData(), d = dot(n,p);
+  const question = [
+    "Bestimme die Koordinatenform zur gegebenen Parameterform." + line(param(p,u,v)),
+    "Die Ebene enthält " + mat(pt("P",p)) + " und hat den Normalenvektor " + mat(sym("n") + " = " + vec(n)) + ". Bestimme ihre Koordinatenform.",
+    "Die Ebene enthält " + mat(pt("P",p)) + " und ist orthogonal zur Geraden." +
+      line("g: " + sym("x") + " = " + vec([1,0,2]) + " + t · " + vec(n))
+  ][variant];
+  const normalStep = [
+    "Bilde das Kreuzprodukt der Spannvektoren." +
+      line(sym("u") + " × " + sym("v") + " = " + vec(crossCalc(u,v)) + " = " + vec(n)) +
+      "Alternativ ergeben die beiden Orthogonalitätsbedingungen " +
+      mat("n₁ + " + factor(u[2]) + " · n₃ = 0") + " und " +
+      mat("n₂ + " + factor(v[2]) + " · n₃ = 0") + ". Wähle n₃ = 1.",
+    "Lies die Koeffizienten aus dem Normalenvektor ab.",
+    "Der Richtungsvektor der Geraden ist ein Normalenvektor der Ebene."
+  ][variant];
+  return options(question,
+    ["Bilde das Kreuzprodukt der Spannvektoren. Berechne dann d mit dem Stützpunkt.",
+      "Übernimm die drei Komponenten des Normalenvektors als Koeffizienten und setze P für die rechte Seite ein.",
+      "Nutze den Richtungsvektor der Geraden als Normalenvektor der Ebene. Setze dann P ein."][variant],
+    normalStep + line("d = " + dotCalc(n,p) + " = " + fmt(d)) + line(coord(n,d)),
+    line(coord(n,d)), line(coord(n,d+1)), line(coord([-n[0],n[1],1],d)));
+}
+
+function interceptData() {
+  const values = [rand(2,5), rand(2,5), rand(2,5)];
+  const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+  const d = values.reduce((lcm, v) => lcm * v / gcd(lcm, v), 1);
+  return {values,d,n:values.map(value => d / value)};
+}
+function interceptTask() {
+  const {values,d,n} = interceptData();
+  const signs = values.map(() => pick([1,-1]));
+  const a = n.map((v,i) => v * signs[i]);
+  const intercepts = values.map((v,i) => v * signs[i]);
+  return fields("Berechne die drei Spurpunkte." + line(coord(a,d)) +
+    "Trage für jeden Spurpunkt alle drei Koordinaten ein.",
+    "Setze für S₁ die beiden anderen Koordinaten gleich null. Gehe bei S₂ und S₃ genauso vor.",
+    intercepts.map((v,i) => "Setze " + subs.map((_,j) => j).filter(j => j !== i).map(j => x(j) + " = 0").join(" und ") + "." +
+      line(lhs(axisPoint(i,a[i])) + " = " + fmt(d) + " &nbsp;⇒&nbsp; " + x(i) + " = " + frac(d,a[i]) +
+        " = " + fmt(v) + " &nbsp;⇒&nbsp; " + pt("S"+subs[i],axisPoint(i,v)))).join(""),
+    spurLabels, spurCoordinates(intercepts), {notation: "points"});
+}
+
+function plot(values, corners = [], description = "") {
+  // A square is 16 × 16 drawing units. The receding axis follows its diagonal.
+  const square = 16;
+  const origin = [144,192];
+  const vectors = [[-square,square],[2*square,0],[0,-2*square]];
+  const project = point => origin.map((offset,j) =>
+    point.reduce((sum,v,i) => sum + v*vectors[i][j],offset));
+  if (corners.length) {
+    // Choose another diagonal when this view would show the plane edge-on.
+    for (const [dx,dy] of [[-1,1],[1,1],[-1,-1]]) {
+      vectors[0] = [dx*square,dy*square];
+      const [a,b,c] = corners.map(project);
+      if ((b[0]-a[0])*(c[1]-a[1]) !== (b[1]-a[1])*(c[0]-a[0])) break;
+    }
+  }
+  const pos = (i,v) => vectors[i].map((step,j) => origin[j] + step*v);
+  const xy = point => point.join(",");
+  const bounds = [[0,0],[380,292],...corners.map(project)];
+  const axis = vectors.map((_, i) => {
+    const min = corners.length ? Math.min(-1,...corners.map(p => p[i])) : 0;
+    const max = corners.length ? Math.max(3,...corners.map(p => p[i])) : 5;
+    const end = pos(i,max+.65), start = pos(i,min-(corners.length ? .65 : 1.4));
+    if (corners.length) bounds.push(end,start);
+    const offset = [[Math.sign(vectors[0][0])*11,4],[9,-7],[9,9]][i];
+    const tick = [[-16,1],[-5,18],[9,5]][i];
+    return '<line x1="'+start[0]+'" y1="'+start[1]+'" x2="'+end[0]+'" y2="'+end[1]+'" stroke="#514259" marker-end="url(#arrow)"/>' +
+      Array.from({length:max-min+1},(_,k) => {
+        const value = min+k;
+        if (value === 0) return "";
+        const [xx,yy] = pos(i,value);
+        const [dx,dy] = i === 1 ? [0,4] : [4,0];
+        return '<line x1="'+(xx-dx)+'" y1="'+(yy-dy)+'" x2="'+(xx+dx)+'" y2="'+(yy+dy)+'" stroke="#514259"/>'+
+          '<text x="'+(xx+tick[0])+'" y="'+(yy+tick[1])+'">'+fmt(value)+'</text>';
+      }).join("") + '<text class="axis-name" x="'+(end[0]+offset[0])+'" y="'+(end[1]+offset[1])+'">'+x(i)+'</text>';
+  }).join("");
+  const points = values.map((v,i) => Number.isInteger(v) && (corners.length || (v >= 1 && v <= 5)) ? pos(i,v) : null);
+  const visible = corners.length ? corners.map(project) : points.filter(Boolean);
+  const polygon = visible.length >= 2 ? '<polygon points="'+visible.map(xy).join(" ")+'" fill="#e884b740" stroke="#bd246f" stroke-width="2"/>' : "";
+  const dots = points.map((point,i) => {
+    if (!point) return "";
+    const [xx,yy] = point;
+    return '<circle cx="'+xx+'" cy="'+yy+'" r="4" fill="#971852"/>' +
+      '<text class="point-name" x="'+(xx+8)+'" y="'+(yy-10)+'">S'+subs[i]+'</text>';
+  }).join("");
+  const box = corners.length ? [0,1].map(i => Math.min(0,...bounds.slice(2).map(p => p[i]-24))) : [0,0];
+  const size = [0,1].map(i => Math.max(bounds[1][i],...bounds.slice(2).map(p => p[i]+24))-box[i]);
+  return '<svg class="graph" viewBox="'+[...box,...size].join(" ")+'" role="img" aria-label="'+
+    (description || "Schrägbild der drei Koordinatenachsen")+
+    points.map((p,i) => p ? ', S'+subs[i]+' bei '+values[i]+' auf der '+x(i)+'-Achse' : '').join("")+'">' +
+    '<defs><pattern id="grid" width="'+square+'" height="'+square+'" patternUnits="userSpaceOnUse"><path d="M'+square+' 0H0V'+square+'" fill="none" stroke="#e5dce8" stroke-width="1"/></pattern>' +
+    '<marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#514259"/></marker></defs>' +
+    '<rect x="'+box[0]+'" y="'+box[1]+'" width="'+size[0]+'" height="'+size[1]+'" fill="url(#grid)"/>'+polygon+axis+
+    '<text x="151" y="210">0</text>'+dots+'</svg>';
+}
+function drawTask() {
+  const {values,d,n} = interceptData();
+  return fields("Zeichne einen Ausschnitt der Ebene." + line(coord(n,d)) +
+    "Gib für S₁, S₂ und S₃ jeweils alle drei Koordinaten ein. Die Zeichnung passt sich beim Eingeben an.",
+    "Berechne zuerst für jede Achse den Schnittpunkt. Zum Beispiel gilt auf der x₁-Achse x₂ = 0 und x₃ = 0.",
+    values.map((v,i) => line(lhs(axisPoint(i,n[i])) + " = " + fmt(d) + " &nbsp;⇒&nbsp; " + pt("S"+subs[i],axisPoint(i,v)))).join("") +
+    "Das Dreieck verbindet die drei Spurpunkte und zeigt einen Ausschnitt der Ebene.",
+    spurLabels, spurCoordinates(values), {notation: "points", diagram: true});
+}
+function fromInterceptsTask() {
+  const {values,d,n} = interceptData();
+  const signed = values.map(v => v * pick([-1,1]));
+  const coefficients = n.map((v,i) => Math.sign(signed[i])*v);
+  const normalized = signed.map((v,i) => {
+    const sign = v < 0 ? (i ? " − " : "−") : (i ? " + " : "");
+    return sign + frac(1,Math.abs(v)) + x(i);
+  }).join("") + " = 1";
+  const graphical = rand(0,1) === 1;
+  const question = graphical ? "Lies die Spurpunkte aus der Zeichnung ab und stelle die Ebenengleichung auf." :
+    "Stelle aus den Spurpunkten die Ebenengleichung auf." +
+      line(signed.map((v,i) => pt("S"+subs[i],axisPoint(i,v))).join(", &nbsp; "));
+  const c = graphical ? n : coefficients;
+  const correct = line(coord(c,d));
+  const task = options(question,
+    "Wähle zunächst 1 als rechte Seite. Für S₁ gilt dann n₁ · x₁ = 1. Verfahre ebenso mit S₂ und S₃.",
+    "Simons Ansatz mit rechter Seite 1" +
+      line("E: " + (graphical ? values.map((v,i) => frac(1,v)+x(i)).join(" + ") + " = 1" : normalized)) +
+    "Lauras Ansatz mit ganzzahligen Koeffizienten. Multipliziere beide Seiten mit " + d + "." + correct,
+    correct, line(coord(c,d+1)), line(coord(c.map((v,i) => i === 0 ? -v : v),d)));
+  if (graphical) task.fixedDiagram = values;
+  return task;
+}
+
+function specialTask() {
+  const count = rand(1,2), n = [0,0,0], first = rand(0,2);
+  n[first] = nonzero();
+  if (count === 2) n[(first+pick([1,2]))%3] = nonzero();
+  const d = Math.abs(n.reduce((product,v) => v ? product*v : product,1))*rand(1,3);
+  const missing = subs.map((_,i) => i).filter(i => !n[i]);
+  const planes = ["x₂x₃-Ebene","x₁x₃-Ebene","x₁x₂-Ebene"];
+  const axis = i => x(i)+"-Achse";
+  const parallel = count === 1 ? planes[first] : axis(missing[0]);
+  const wrong = count === 1 ? planes : subs.map((_,i) => axis(i));
+  const text = name => "Die Ebene ist parallel zur "+name+".";
+  const intercepts = n.map(v => v ? d/v : null);
+  const shift = (point, i, step) => point.map((v,j) => i === j ? v+step : v);
+  const a = axisPoint(first,intercepts[first]);
+  const second = n.findIndex((v,i) => v && i !== first);
+  const b = count === 1 ? shift(a,missing[0],4) : axisPoint(second,intercepts[second]);
+  const direction = missing[count === 1 ? 1 : 0];
+  const corners = [a,b,shift(b,direction,4),shift(a,direction,4)];
+  return options("Welche besondere Lage hat die Ebene?" + line(coord(n,d)),
+    "Achte darauf, welche Variablen fehlen. Ihre Werte darfst du ändern, ohne dass sich die linke Seite ändert.",
+    missing.map(i => x(i)).join(" und ") + (count === 1 ? " fehlen." : " fehlt.") + " " + text(parallel) +
+    "<p>Spurpunkte gibt es hier nur auf den Achsen, deren Variablen in der Gleichung vorkommen. " +
+    "Auf den anderen Achsen ergibt die linke Seite 0 und damit nicht " + d + ".</p>" +
+    n.map((v,i) => v ? line(pt("S"+subs[i],axisPoint(i,d/v))) : "").join("") +
+    plot(intercepts,corners,"Schrägbild der Ebene. "+text(parallel)),
+    text(parallel), ...wrong.map(text));
+}
+
+function parameterTask() {
+  const {n,u,v} = spanData(), d = nonzero(), p = [0,0,d];
+  const incorrect = v.map((value,i) => i === 2 ? value+1 : value);
+  return options("Welche Parameterform beschreibt diese Ebene?" + line(coord(n,d)),
+    "Setze für einen Stützpunkt x₁ und x₂ gleich null. Die zwei Spannvektoren müssen orthogonal zum Normalenvektor und linear unabhängig sein.",
+    "Für x₁ = x₂ = 0 folgt x₃ = " + fmt(d) + ". Ein Stützpunkt ist also " + mat(pt("P",p)) +
+    ". Für die Spannvektoren muss das Skalarprodukt mit dem Normalenvektor null sein." +
+    line(sym("n")+" · "+sym("u")+" = "+dotCalc(n,u)+" = 0") +
+    line(sym("n")+" · "+sym("v")+" = "+dotCalc(n,v)+" = 0") +
+    "Die Vektoren sind keine Vielfachen voneinander und damit linear unabhängig." + line(param(p,u,v)),
+    line(param(p,u,v)), line(param([0,0,d+1],u,v)), line(param(p,u,incorrect)), line(param(p,u,u.map(value => -value))));
+}
+
+function relationSketches() {
+  const sketch = orthogonal => {
+    const kind = orthogonal ? "orthogonal" : "parallel";
+    const title = orthogonal ? "Orthogonales Schneiden" : "Echt parallel";
+    const arrow = (color, x1, y1, x2, y2) =>
+      '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="var(--'+color+
+      ')" stroke-width="3.5" marker-end="url(#'+kind+'-'+color+')"/>';
+    const label = (color, letter, x, y) =>
+      '<g transform="translate('+x+' '+y+')"><text class="'+color+'">'+letter+'</text>'+
+      '<path d="M0 -13H12 M9 -16L12 -13L9 -10" fill="none" stroke="var(--'+color+')"/></g>';
+    return '<figure><figcaption>'+title+'</figcaption>'+
+      '<svg class="relation-graph" viewBox="0 0 320 198" role="img" aria-label="'+title+
+      '. Richtungsvektor orange, Normalenvektor rot.">'+
+      '<defs>'+["direction","normal"].map(color =>
+        '<marker id="'+kind+'-'+color+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto">'+
+        '<path d="M0 0L10 5L0 10Z" fill="var(--'+color+')"/></marker>').join("")+'</defs>'+
+      '<path d="M40 152H248L300 87H92Z" fill="#f1e4f1" stroke="#796582"/>'+
+      '<text x="246" y="139">E</text>'+
+      (orthogonal ?
+        '<path d="M145 122V182" stroke="#514259" stroke-width="2" stroke-dasharray="5 4"/>'+
+        '<path d="M145 122V19" fill="none" stroke="#514259" stroke-width="2"/>'+
+        '<circle cx="145" cy="122" r="3" fill="#514259"/><text x="123" y="29">g</text>'+
+        arrow("direction",145,101,145,38)+label("direction","w",154,53)+
+        arrow("normal",199,122,199,59)+label("normal","n",209,74) :
+        '<path d="M45 49H282" stroke="#514259" stroke-width="2"/><text x="287" y="54">g</text>'+
+        arrow("direction",81,49,160,49)+label("direction","w",133,36)+
+        arrow("normal",199,122,199,59)+label("normal","n",209,74))+
+      '</svg></figure>';
+  };
+  return '<div class="relation-sketches">'+sketch(true)+sketch(false)+'</div>'+
+    '<p class="relation-legend"><span class="direction">Orange: Richtungsvektor der Geraden</span>'+
+    '<span class="normal">Rot: Normalenvektor der Ebene</span></p>';
+}
+
+function relationTask() {
+  const {n,u} = spanData(), p = triple(), value = dot(n,p);
+  const variant = rand(0,3);
+  const w = [u, u, n.map(value => -value), [0,0,1]][variant];
+  const d = value + (variant === 0 ? 0 : 2);
+  const relation = ["g liegt in E.", "g verläuft parallel zu E und hat keinen Schnittpunkt mit E.",
+    "g ist orthogonal zu E.", "g schneidet E schräg."];
+  return options("Wie liegt die Gerade g zur Ebene E?" + line(coord(n,d)) +
+    line("g: " + sym("x") + " = " + vec(p) + " + t · " + vec(w)),
+    "Prüfe zuerst, ob der Richtungsvektor der Geraden ein Vielfaches des Normalenvektors ist. Berechne auch ihr Skalarprodukt.",
+    line(sym("n") + " · " + sym("w") + " = " + dotCalc(n,w) + " = " + fmt(dot(n,w))) +
+    (variant < 2 ? "Das Skalarprodukt ist null. Die Gerade hat eine zur Ebene parallele Richtung. Prüfe nun ihren Stützpunkt." +
+      line(dotCalc(n,p)+" = "+fmt(value)+(variant === 0 ? " = " : " ≠ ")+fmt(d)) :
+      variant === 2 ? "Der Richtungsvektor der Geraden ist das (−1)-Fache des Normalenvektors." :
+      "Das Skalarprodukt ist ungleich null. Die Gerade schneidet die Ebene. Ihr Richtungsvektor ist kein Vielfaches des Normalenvektors.") +
+    "<p>"+relation[variant]+"</p>", relation[variant], ...relation);
+}
+
+const generators = [pointTask, crossTask, constructTask, interceptTask, drawTask,
+  fromInterceptsTask, specialTask, parameterTask, relationTask];
+
+function taskSignature(task) {
+  return JSON.stringify([task.question, task.fixedDiagram]);
+}
+function fresh(i) {
+  let task;
+  do {
+    task = generators[i]();
+  } while (taskSignature(task) === last[i]);
+  last[i] = taskSignature(task);
+  return {task, selected: -1, values: task.labels?.map(() => "") ?? [],
+    checked: "", showTip: false, revealed: false, solved: false};
+}
+const current = () => drafts[mode];
+const number = i => String(i+1).padStart(2,"0");
+const checkmark = '<span class="station-check" aria-hidden="true">✓</span>';
+const totalRequired = required.reduce((sum, goal) => sum+goal,0);
+
+function save() {
+  try { localStorage.setItem(storageKey,JSON.stringify(counts)); } catch {}
+}
+function progress() {
+  const completed = counts.filter((value,i) => value>=required[i]).length;
+  const total = counts.reduce((sum,value,i) => sum+Math.min(value,required[i]),0);
+  $("bar").max = totalRequired;
+  $("bar").value = total;
+  $("score").textContent = completed+" von "+names.length+" Stationen abgeschlossen";
+  $("count").textContent = Math.min(counts[mode],required[mode])+" / "+required[mode]+" selbstständig gelöst";
+  const complete = counts[mode]>=required[mode];
+  $("station-hint").textContent = complete ?
+    (mode+1 < names.length ? "Station abgeschlossen. Du kannst zur nächsten Station wechseln." : "Du hast diese Station abgeschlossen.") : "";
+  $("next-station").hidden = !complete || mode+1 >= names.length;
+  $("next-station").textContent = names[mode+1] || "";
+  for (const nav of [$("nav"),$("mobile-nav")]) {
+    [...nav.children].forEach((button,i) => {
+      const done = counts[i]>=required[i];
+      button.classList.toggle("active",i===mode);
+      if (i===mode) button.setAttribute("aria-current","step");
+      else button.removeAttribute("aria-current");
+      button.innerHTML = number(i)+"&ensp;"+names[i]+(done ? checkmark : "");
+      button.setAttribute("aria-label",number(i)+" "+names[i]+(done ? ", abgeschlossen" : ""));
+    });
+  }
+  $("mobile-current-check").hidden = !complete;
+  $("mobile-current").textContent = number(mode)+" "+names[mode];
+  $("mobile-station").querySelector("summary").setAttribute("aria-label",
+    "Übungsbereich auswählen, "+number(mode)+" "+names[mode]+(complete ? ", abgeschlossen" : ""));
+}
+function parseValue(input) {
+  const value = input.trim().replace(/−/g,"-").replace(/,/g,".");
+  if (/^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(value)) return Number(value);
+  const ratio = value.match(/^([+-]?\d+)\s*\/\s*([+-]?\d+)$/);
+  return ratio && Number(ratio[2]) ? Number(ratio[1])/Number(ratio[2]) : NaN;
+}
+function refreshDiagram() {
+  const state = current();
+  if (!state.task.diagram) return;
+  const usingSolution = state.revealed || state.solved;
+  const coordinates = usingSolution ? state.task.answer : state.values.map(parseValue);
+  const positions = subs.map((_, i) => {
+    const point = coordinates.slice(3*i, 3*i+3);
+    // Keep the live preview responsive while the two zero entries are still blank.
+    return point.every((v, j) => j === i || Number.isNaN(v) || v === 0) ? point[i] : NaN;
+  });
+  $("diagram").innerHTML = plot(positions);
+}
+function feedback() {
+  const state = current(), task = state.task;
+  const status = $("feedback");
+  const bad = ["incomplete","wrong"].includes(state.checked);
+  status.classList.toggle("bad",bad && !state.revealed);
+  $("tip").innerHTML = state.showTip ? "<strong>Tipp</strong><br>"+task.hint : "";
+  if (state.solved) {
+    status.innerHTML = "<strong>Richtig.</strong>"+(state.revealed ?
+      " Diese Aufgabe zählt wegen der eingeblendeten Lösung nicht zum Fortschritt." : "")+"<div>"+task.solution+"</div>";
+  } else if (task.showOnWrong && state.checked === "wrong") {
+    status.innerHTML = "<strong>Die Auswahl ist falsch.</strong><div>"+task.solution+"</div>";
+  } else if (state.revealed) {
+    status.innerHTML = "<strong>Lösungsweg</strong><div>"+task.solution+
+      "</div><p>Diese Aufgabe zählt nicht zum Fortschritt.</p>";
+  } else {
+    status.textContent = state.checked === "wrong" ? "Noch nicht richtig. Überprüfe deine Rechnung und versuche es erneut." :
+      state.checked === "incomplete" ? (task.choices ? "Wähle zuerst eine Antwort aus." : "Trage in jedes Feld eine Zahl ein.") : "";
+  }
+  const finished = state.solved || (task.showOnWrong && state.checked === "wrong");
+  $("check").disabled = finished;
+  $("show").hidden = finished || state.revealed;
+}
+function answerFields(task) {
+  const inputs = task.labels.map((label,i) => '<input type="text" aria-label="'+label+
+    '" autocomplete="off" spellcheck="false" id="field-'+i+'">');
+  if (task.notation === "vector") {
+    return '<div class="math vector-entry" role="group" aria-label="Normalenvektor">'+sym("n")+
+      ' = <span class="vec">'+inputs.join("")+'</span></div>';
+  }
+  return '<div class="point-entries">'+subs.map((sub,i) =>
+    '<div class="math point-entry" role="group" aria-label="Spurpunkt S'+sub+'"><span>S'+sub+'(</span>'+
+    inputs.slice(3*i,3*i+3).join('<span aria-hidden="true">|</span>')+'<span>)</span></div>').join("")+'</div>';
+}
+function renderTask() {
+  const state = current(), task = state.task;
+  const diagram = task.fixedDiagram ? plot(task.fixedDiagram) : "";
+  const sketches = mode === 8 ? relationSketches() : "";
+  const inputs = task.choices ?
+    '<div role="group" aria-label="Antwortmöglichkeiten" class="choices options-wide">'+task.choices.map((choice,i) =>
+      '<button type="button" aria-pressed="'+(i===state.selected)+'" data-choice="'+i+'">'+choice+'</button>').join("")+'</div>' :
+    answerFields(task);
+  $("content").innerHTML = '<div class="question" id="question">'+task.question+'</div>'+diagram+
+    inputs+(task.diagram ? '<div id="diagram"></div>' : '')+
+    '<div class="actions"><button class="primary" id="check" type="button">Prüfe</button>'+
+    '<button id="tip-button" type="button">Tipp</button><button id="show" type="button">Lösung zeigen</button>'+
+    '<button id="new" type="button">Neue Übungsaufgabe</button></div>'+
+    '<div class="feedback" id="tip" role="status"></div><div class="feedback" id="feedback" role="status"></div>'+sketches;
+  const choiceButtons = [...$("content").querySelectorAll("[data-choice]")];
+  choiceButtons.forEach((button,i) => button.onclick = () => {
+    if ($("check").disabled) return;
+    state.selected = i;
+    state.checked = "";
+    choiceButtons.forEach((item,j) => item.setAttribute("aria-pressed",String(i===j)));
+    feedback();
+  });
+  task.labels?.forEach((_,i) => {
+    const field = $("field-"+i);
+    field.value = state.values[i];
+    field.readOnly = state.solved;
+    field.onkeydown = event => {
+      if (event.key === "Enter" && !$("check").disabled) $("check").click();
+    };
+    field.oninput = () => {
+      state.values[i] = field.value;
+      state.checked = "";
+      refreshDiagram();
+      feedback();
+    };
+  });
+  $("check").onclick = () => {
+    if ($("check").disabled) return;
+    const given = state.values.map(parseValue);
+    const incomplete = task.choices ? state.selected < 0 : given.some(v => !Number.isFinite(v));
+    const correct = !incomplete && (task.choices ? state.selected===task.answer :
+      given.every((v,i) => v===task.answer[i]));
+    state.checked = incomplete ? "incomplete" : correct ? "correct" : "wrong";
+    if (correct) {
+      state.solved = true;
+      if (!state.revealed) {
+        counts[mode]++;
+        save();
+        progress();
+      }
+      task.labels?.forEach((_,i) => $("field-"+i).readOnly = true);
+      refreshDiagram();
+    }
+    feedback();
+    $("feedback").tabIndex = -1;
+    $("feedback").focus();
+  };
+  $("tip-button").setAttribute("aria-controls","tip");
+  $("tip-button").onclick = () => {
+    state.showTip = !state.showTip;
+    feedback();
+    $("tip-button").setAttribute("aria-expanded",String(state.showTip));
+  };
+  $("tip-button").setAttribute("aria-expanded",String(state.showTip));
+  $("show").onclick = () => {
+    state.revealed = true;
+    refreshDiagram();
+    feedback();
+    $("feedback").tabIndex = -1;
+    $("feedback").focus({preventScroll:true});
+  };
+  $("new").onclick = () => {
+    drafts[mode] = fresh(mode);
+    renderTask();
+    $("question").tabIndex = -1;
+    $("question").focus();
+  };
+  refreshDiagram();
+  feedback();
+}
+function openStation(i, focus = true) {
+  mode = i;
+  drafts[i] ??= fresh(i);
+  $("mobile-station").open = false;
+  $("tag").textContent = "ÜBUNGSSTATION "+number(i);
+  $("title").textContent = names[i];
+  $("desc").textContent = descriptions[i];
+  renderTask();
+  progress();
+  if (focus) $("title").focus();
+}
+for (const nav of [$("nav"), $("mobile-nav")]) {
+  names.forEach((_,i) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.mode = i;
+    button.onclick = () => openStation(i);
+    nav.append(button);
+  });
+}
+$("next-station").onclick = () => openStation(mode+1);
+$("reset").onclick = () => {
+  if (!confirm("Möchtest du den Fortschritt in allen Stationen zurücksetzen?")) return;
+  counts.fill(0);
+  drafts.fill(null);
+  save();
+  openStation(mode);
+};
+openStation(0,false);
+</script></body></html>
